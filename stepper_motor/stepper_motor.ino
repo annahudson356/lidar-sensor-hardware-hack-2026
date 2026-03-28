@@ -8,7 +8,7 @@
 
 // Step Angle 1.8 degrees per revolution
 const float stepsPerRev = 200;
-const float rpm = 1;
+const float rpm = 1000;
 
 AccelStepper stepper(AccelStepper::DRIVER, STEP_PIN, DIR_PIN);
 
@@ -23,17 +23,15 @@ void setup() {
   pinMode(M1_PIN, OUTPUT);
   pinMode(M2_PIN, OUTPUT);
 
-  digitalWrite(M0_PIN, LOW);
-  digitalWrite(M1_PIN, LOW);
-  digitalWrite(M2_PIN, LOW);
+  digitalWrite(M0_PIN, HIGH);
+  digitalWrite(M1_PIN, HIGH);
+  digitalWrite(M2_PIN, HIGH);
 
   float microSetting = 1;
-  stepper.setMaxSpeed(1000);
-  stepper.setSpeed(200);
-  //float speedSps = (microSetting * stepsPerRev * rpm) / 60;
-  //float max = (microSetting * stepsPerRev * 300) / 60;
-  //stepper.setMaxSpeed(max);
-  //stepper.setSpeed(speedSps);
+  float speedSps = (microSetting * stepsPerRev * rpm) / 60;
+  float max = (microSetting * stepsPerRev * 300) / 60;
+  stepper.setMaxSpeed(max);
+  stepper.setSpeed(speedSps);
 
 }
 
