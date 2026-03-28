@@ -15,8 +15,8 @@ void loop() {
     myservo.write(pos);
     delay(15);
   }
-  for(pos = 180l pos >= 0; pos --){
-    myservp.write(pos);
+  for(pos = 180; pos >= 0; pos --){
+    myservo.write(pos);
     delay(15);
   }
 
