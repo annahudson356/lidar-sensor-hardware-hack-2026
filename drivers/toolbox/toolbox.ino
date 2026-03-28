@@ -1,5 +1,9 @@
 #include <AccelStepper.h>
 #include <Servo.h>
+#include <LIDARLite.h>
+#include <Wire.h>   // required to use LIDARLite with I2C
+
+// Note: LIDARLite uses SCL and SDA pins
 
 #define STEP_PIN 3
 #define DIR_PIN 2
@@ -7,7 +11,7 @@
 #define M1_PIN 6
 #define M2_PIN 5
 
-#define SERVO_PIN = 8;
+#define SERVO_PIN 8
 
 // Step Angle 1.8 degrees per revolution
 const float stepsPerRev = 200;
@@ -21,9 +25,16 @@ int servoDirection = 1;
 unsigned long lastServoUpdate = 0;
 const int SERVO_DELAY = 15;
 
+LIDARLite lidar;
 
 void setup() {
-    // put your setup code here, to run once:
+    // LiDAR + Serial setup
+    Serial.begin(115200);
+    delay(100);
+    lidar.begin(0, true);
+    lidar.configure(0);
+
+    // Stepper motor setup
     pinMode(STEP_PIN, OUTPUT);
     pinMode(DIR_PIN, OUTPUT);
 
@@ -42,15 +53,23 @@ void setup() {
     stepper.setMaxSpeed(max);
     stepper.setSpeed(speedSps);
 
-    // Set up servo
+    // Servo setup
     myservo.attach(SERVO_PIN);
 
 }
 
 void loop() {
-    // put your main code here, to run repeatedly:
+    // Repeatedly poll the stepper motor
     stepper.runSpeed();
 
+    // TODO: add more lidar functionality
+    // TODO: fix issue, eventually lidar starts returning "nack" and all motors stop
+    // Read from lidar
+    int distance = lidar.distance();
+    Serial.print(distance);
+    Serial.print('\n');
+
+    // Reverse the direction of the servo motor every 180 degrees
     unsigned long now = millis();
     if (now - lastServoUpdate >= SERVO_DELAY) {
         lastServoUpdate = now;
