@@ -26,6 +26,19 @@ unsigned long lastServoUpdate = 0;
 const int SERVO_DELAY = 15;
 
 LIDARLite lidar;
+int lidarCount = 0;
+
+// I'm not sure if this actually recovers anything
+void resetLidar() {
+    Serial.println("Resetting LIDAR...");
+    Wire.end();
+    delay(50);
+    Wire.begin();
+    delay(50);
+    lidar.begin(0, true);
+    lidar.configure(0);
+    lidarCount = 0;
+}
 
 void setup() {
     // LiDAR + Serial setup
@@ -62,12 +75,21 @@ void loop() {
     // Repeatedly poll the stepper motor
     stepper.runSpeed();
 
-    // TODO: add more lidar functionality
+    // TODO: package distance, pitch, and yaw into packets
     // TODO: fix issue, eventually lidar starts returning "nack" and all motors stop
-    // Read from lidar
-    int distance = lidar.distance();
-    Serial.print(distance);
-    Serial.print('\n');
+
+    // Read lidar and bias correct every 100 readings
+    bool biasCorrect = (lidarCount % 100 == 0);
+    int distance = lidar.distance(biasCorrect);
+    lidarCount++;
+
+    // distance() returns -1 on NACK/error
+    if (distance < 0) {
+        Serial.println("LIDAR error, attempting reset...");
+        resetLidar();
+    } else {
+        Serial.println(distance);
+    }
 
     // Reverse the direction of the servo motor every 180 degrees
     unsigned long now = millis();
