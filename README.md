@@ -10,8 +10,8 @@ We used a 17HE15-1504S Stepper Motor. To control it, we used our Arduino with a 
 We leveraged the Garmin LiDAR libary to accomplish our tasks.
 
 
-# Libraries Used
-## Arduino
+## Libraries Used
+### Arduino
 - Servo (Michael Margolis, Arduino)
 - AccelStepper (Micheal McCauley)
 - LIDAR-Lite (Garmin)
