@@ -8,6 +8,7 @@
 
 // Step Angle 1.8 degrees per revolution
 const float stepsPerRev = 200;
+const float rpm = 50;
 
 AccelStepper stepper(AccelStepper::DRIVER, STEP_PIN, DIR_PIN);
 
@@ -17,20 +18,21 @@ void setup() {
   pinMode(STEP_PIN, OUTPUT);
   pinMode(DIR_PIN, OUTPUT);
 
+  // Set up microstepping
+  pinMode(M0_PIN, HIGH);
+  pinMode(M1_PIN, HIGH);
+  pinMode(M2_PIN, HIGH);
+
+  float microSetting = 1;
+  float speedSps = (microSetting * stepsPerRev * rpm) / 60;
+  float max = (microSetting * stepsPerRev * 300) / 60;
+  stepper.setMaxSpeed(max);
+  stepper.setSpeed(speedSps);
+
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  digitalWrite(DIR_PIN, HIGH);
-
-  for(int i = 0; i < stepPerRev; i++){
-      digitalWrite(STEP_PIN, HIGH);
-      delayMicroseconds(2000);
-      digitalWrite(STEP_PIN, LOW);
-      delayMicroseconds(2000);
-  }
-  delay(1000);
-
-  digitalWrite(DIR_PIN, LOW);
+  stepper.runSpeed();
 
 }
