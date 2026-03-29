@@ -36,7 +36,7 @@ AccelStepper stepper(AccelStepper::DRIVER, STEP_PIN, DIR_PIN);
 
 void setup() {
     // LiDAR + Serial setup
-    Serial.begin(115200);
+    Serial.begin(9600);
     delay(100);
     lidar.begin(0, true);
     lidar.configure(0);
@@ -90,9 +90,9 @@ void loop() {
     
     
     Serial.print(pitch, 2);
-    Serial.print(", ");
+    Serial.print(",");
     Serial.print(yaw, 2);
-    Serial.print(", ");
+    Serial.print(",");
     Serial.println(distance);
 
 }
