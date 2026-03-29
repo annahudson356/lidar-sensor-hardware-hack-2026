@@ -15,17 +15,18 @@
 
 // Step Angle 1.8 degrees per revolution
 const float stepsPerRev = 200;
-const float rpm = 100;
-const float microSetting = 4;
+const float rpm = 1000;
+const float microSetting = 1;
 // Data To Report to Unity
 double yaw;
 double pitch;
 long long distance;
 
 
-int  lidarCount = 0;
+int lidarCount = 0;
 int loopCount = 0;
-int servoDirection = 10;
+int dataCount = 0;
+int servoDirection = 3;
 unsigned long lastServoUpdate = 0;
 const int SERVO_DELAY = 15;
 
@@ -34,33 +35,34 @@ Servo myservo;
 AccelStepper stepper(AccelStepper::DRIVER, STEP_PIN, DIR_PIN);
 
 
-void setup() {
-    // LiDAR + Serial setup
-    Serial.begin(115200);
-    delay(100);
-    lidar.begin(0, true);
-    lidar.configure(0);
 
-    // Stepper motor setup
+
+void setup() {
+    Serial.begin(9600);
+    delay(100);
+
     pinMode(STEP_PIN, OUTPUT);
     pinMode(DIR_PIN, OUTPUT);
-
-    // Set up microstepping
     pinMode(M0_PIN, OUTPUT);
     pinMode(M1_PIN, OUTPUT);
     pinMode(M2_PIN, OUTPUT);
 
     digitalWrite(M0_PIN, LOW);
-    digitalWrite(M1_PIN, HIGH);
+    digitalWrite(M1_PIN, LOW);
     digitalWrite(M2_PIN, LOW);
 
-    float speedSps = (microSetting * stepsPerRev * rpm) / 60;
-    stepper.setMaxSpeed(speedSps);
-    stepper.setSpeed(speedSps);
-
-    // Servo setup
     myservo.attach(SERVO_PIN);
+    delay(500);
+    myservo.write(0);
+    delay(1000);
 
+    lidar.begin(0, true);
+    lidar.configure(0);
+
+    stepper.setCurrentPosition(0);
+    float speedSps = (microSetting * stepsPerRev * rpm) / 60.0;
+    stepper.setMaxSpeed(speedSps);
+    stepper.setSpeed(speedSps);  
 }
 
 void loop() {
@@ -73,9 +75,10 @@ void loop() {
     if(pitch < 0.01){
         loopCount ++;
     }
-    else if(loopCount >= 3){
+    else if(loopCount >= 2){
         yaw += servoDirection;
         myservo.write(yaw);
+
         // Reverse the direction of the servo motor every 180 degrees
         if (yaw >= 180 || yaw <= 0) {
             servoDirection = -servoDirection;
@@ -88,11 +91,15 @@ void loop() {
     distance = lidar.distance(biasCorrect);
     lidarCount++;
     
+    if(dataCount % 1 == 0){
+        Serial.print(pitch, 2);
+        Serial.print(",");
+        Serial.print(yaw, 2);
+        Serial.print(",");
+        Serial.println(distance);
+    }
     
-    Serial.print(pitch, 2);
-    Serial.print(", ");
-    Serial.print(yaw, 2);
-    Serial.print(", ");
-    Serial.println(distance);
+    dataCount ++;
+
 
 }
