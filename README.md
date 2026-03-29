@@ -1,4 +1,4 @@
-# LiDAR Sensor
+# LiDAR Scanner
 Our project was to create...
 
 ## Components
