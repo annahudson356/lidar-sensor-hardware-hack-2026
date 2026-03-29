@@ -4,7 +4,7 @@
 #include <Wire.h>   // required to use LIDARLite with I2C
 
 // Note: LIDARLite uses SCL and SDA pins
-
+#include <string>
 #define STEP_PIN 3
 #define DIR_PIN 2
 #define M0_PIN 7
@@ -15,18 +15,24 @@
 
 // Step Angle 1.8 degrees per revolution
 const float stepsPerRev = 200;
-const float rpm = 1000;
+const float rpm = 100;
+const float microSetting = 4;
+// Data To Report to Unity
+double yaw;
+double pitch;
+long long distance;
 
-AccelStepper stepper(AccelStepper::DRIVER, STEP_PIN, DIR_PIN);
 
-Servo myservo;
-int pos = 0;
-int servoDirection = 1;
+int  lidarCount = 0;
+int loopCount = 0;
+int servoDirection = 10;
 unsigned long lastServoUpdate = 0;
 const int SERVO_DELAY = 15;
 
 LIDARLite lidar;
-int lidarCount = 0;
+Servo myservo;
+AccelStepper stepper(AccelStepper::DRIVER, STEP_PIN, DIR_PIN);
+
 
 void setup() {
     // LiDAR + Serial setup
@@ -44,14 +50,12 @@ void setup() {
     pinMode(M1_PIN, OUTPUT);
     pinMode(M2_PIN, OUTPUT);
 
-    digitalWrite(M0_PIN, HIGH);
+    digitalWrite(M0_PIN, LOW);
     digitalWrite(M1_PIN, HIGH);
-    digitalWrite(M2_PIN, HIGH);
+    digitalWrite(M2_PIN, LOW);
 
-    float microSetting = 1;
     float speedSps = (microSetting * stepsPerRev * rpm) / 60;
-    float max = (microSetting * stepsPerRev * 300) / 60;
-    stepper.setMaxSpeed(max);
+    stepper.setMaxSpeed(speedSps);
     stepper.setSpeed(speedSps);
 
     // Servo setup
@@ -60,27 +64,36 @@ void setup() {
 }
 
 void loop() {
+
     // Repeatedly poll the stepper motor
     stepper.runSpeed();
+    pitch = fmod(((float)stepper.currentPosition() / (stepsPerRev * microSetting)) * 360.0, 360.0);
 
-    // TODO: package distance, pitch, and yaw into packets
-    // TODO: fix issue, eventually lidar starts returning "nack" and all motors stop
-
-    // Read lidar and bias correct every 100 readings
-    bool biasCorrect = (lidarCount % 100 == 0);
-    int distance = lidar.distance(biasCorrect);
-    lidarCount++;
-    Serial.println(distance);
-
-    // Reverse the direction of the servo motor every 180 degrees
-    unsigned long now = millis();
-    if (now - lastServoUpdate >= SERVO_DELAY) {
-        lastServoUpdate = now;
-        pos += servoDirection;
-        myservo.write(pos);
-        if (pos >= 180 || pos <= 0) {
+    // Rotate servo after 3 revs
+    if(pitch < 0.01){
+        loopCount ++;
+    }
+    else if(loopCount >= 3){
+        yaw += servoDirection;
+        myservo.write(yaw);
+        // Reverse the direction of the servo motor every 180 degrees
+        if (yaw >= 180 || yaw <= 0) {
             servoDirection = -servoDirection;
         }
+        loopCount = 0;
+
     }
+    // Read lidar and bias correct every 100 readings
+    bool biasCorrect = (lidarCount % 100 == 0);
+    distance = lidar.distance(biasCorrect);
+    lidarCount++;
+    
+    
+    Serial.print("Pitch: ");
+    Serial.print(pitch, 2);
+    Serial.print(", Yaw: ");
+    Serial.print(yaw, 2);
+    Serial.print(", Distance: ");
+    Serial.println(distance);
 
 }
