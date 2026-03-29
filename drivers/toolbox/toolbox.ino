@@ -35,18 +35,14 @@ Servo myservo;
 AccelStepper stepper(AccelStepper::DRIVER, STEP_PIN, DIR_PIN);
 
 
+
+
 void setup() {
-    // LiDAR + Serial setup
     Serial.begin(9600);
     delay(100);
-    lidar.begin(0, true);
-    lidar.configure(0);
 
-    // Stepper motor setup
     pinMode(STEP_PIN, OUTPUT);
     pinMode(DIR_PIN, OUTPUT);
-
-    // Set up microstepping
     pinMode(M0_PIN, OUTPUT);
     pinMode(M1_PIN, OUTPUT);
     pinMode(M2_PIN, OUTPUT);
@@ -55,13 +51,18 @@ void setup() {
     digitalWrite(M1_PIN, LOW);
     digitalWrite(M2_PIN, LOW);
 
-    float speedSps = (microSetting * stepsPerRev * rpm) / 60;
-    stepper.setMaxSpeed(speedSps);
-    stepper.setSpeed(speedSps);
-
-    // Servo setup
     myservo.attach(SERVO_PIN);
+    delay(500);
+    myservo.write(0);
+    delay(1000);
 
+    lidar.begin(0, true);
+    lidar.configure(0);
+
+    stepper.setCurrentPosition(0);
+    float speedSps = (microSetting * stepsPerRev * rpm) / 60.0;
+    stepper.setMaxSpeed(speedSps);
+    stepper.setSpeed(speedSps);  
 }
 
 void loop() {
