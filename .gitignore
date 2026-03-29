@@ -1,1 +1,38 @@
+# NixOS
 shell.nix
+
+# Unity
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+
+Assets/AssetStoreTools*
+ExportedObj/
+*.pidb.meta
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.consulo/
+
+sysinfo.txt
+*.apk
+*.unitypackage
+
+# Visual Studio
+/.vs/
+
+
+# Other gitignore (may remove later)
+*.json
+*.asset
+*.settings
+
