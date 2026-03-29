@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\PullData.cs" />
+    <Compile Include="Assets\Scripts\Render.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
