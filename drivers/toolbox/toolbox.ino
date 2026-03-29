@@ -21,16 +21,17 @@ const float microSetting = 4;
 double yaw;
 double pitch;
 long long distance;
+
+
 int  lidarCount = 0;
-
-AccelStepper stepper(AccelStepper::DRIVER, STEP_PIN, DIR_PIN);
-
-Servo myservo;
-int servoDirection = 1;
+int loopCount = 0;
+int servoDirection = 10;
 unsigned long lastServoUpdate = 0;
 const int SERVO_DELAY = 15;
 
 LIDARLite lidar;
+Servo myservo;
+AccelStepper stepper(AccelStepper::DRIVER, STEP_PIN, DIR_PIN);
 
 
 void setup() {
@@ -63,29 +64,31 @@ void setup() {
 }
 
 void loop() {
+
     // Repeatedly poll the stepper motor
     stepper.runSpeed();
     pitch = fmod(((float)stepper.currentPosition() / (stepsPerRev * microSetting)) * 360.0, 360.0);
-    // TODO: package distance, pitch, and yaw into packets
-    // TODO: fix issue, eventually lidar starts returning "nack" and all motors stop
 
+    // Rotate servo after 3 revs
+    if(pitch < 0.01){
+        loopCount ++;
+    }
+    else if(loopCount >= 3){
+        yaw += servoDirection;
+        myservo.write(yaw);
+        // Reverse the direction of the servo motor every 180 degrees
+        if (yaw >= 180 || yaw <= 0) {
+            servoDirection = -servoDirection;
+        }
+        loopCount = 0;
+
+    }
     // Read lidar and bias correct every 100 readings
     bool biasCorrect = (lidarCount % 100 == 0);
     distance = lidar.distance(biasCorrect);
     lidarCount++;
-
-
-    // Reverse the direction of the servo motor every 180 degrees
-    unsigned long now = millis();
-    if (now - lastServoUpdate >= SERVO_DELAY) {
-        lastServoUpdate = now;
-        yaw += servoDirection;
-        myservo.write(yaw);
-        // TODO: figure out optimal degree settings
-        if (yaw >= 180 || yaw <= 0) {
-            servoDirection = -servoDirection;
-        }
-    }
+    
+    
     Serial.print("Pitch: ");
     Serial.print(pitch, 2);
     Serial.print(", Yaw: ");
