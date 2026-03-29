@@ -6,7 +6,6 @@ public class PullData : MonoBehaviour
 {
     public string portName = "COM3";
     public int baudRate = 9600;
-
     public static float CurrentPitch;
     public static float CurrentYaw;
     public static float CurrentDistance;
@@ -27,21 +26,16 @@ public class PullData : MonoBehaviour
             readThread.IsBackground = true;
             readThread.Start();
         }
-        catch (System.Exception e)
-        {
-            Debug.LogError("Failed to open port: " + e.Message);
-        }
+        catch {}
     }
 
     void ReadData(){
         while (running){
-            try
-            {
+            try{
                 string line = port.ReadLine();
                 if (line.Contains("Pitch")) continue; 
                 string[] data = line.Trim().Split(',');
-                if (data.Length == 3)
-                {
+                if (data.Length == 3){
                     CurrentPitch = float.Parse(data[0].Trim());
                     CurrentYaw = float.Parse(data[1].Trim());
                     CurrentDistance = float.Parse(data[2].Trim());

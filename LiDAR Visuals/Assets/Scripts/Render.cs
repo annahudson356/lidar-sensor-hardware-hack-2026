@@ -4,9 +4,6 @@ using System.Collections.Generic;
 public class Render : MonoBehaviour
 {
     public float displayScale = 0.02f;
-    public float maxRange = 500f;
-    
-    //public long long maxPoints = 5000000000;
     public Color nearColor = Color.green;
     public Color farColor = Color.red;
     private Queue<GameObject> points = new Queue<GameObject>();
@@ -18,14 +15,14 @@ public class Render : MonoBehaviour
         float yaw = PullData.CurrentYaw;
         float distance = PullData.CurrentDistance;
 
-        if (distance <= 0 || distance > maxRange) return;
         if (pitch == lastPitch && yaw == lastYaw) return;
         lastPitch = pitch;
-        lastYaw   = yaw;
+        lastYaw = yaw;
 
         float pitchRad = pitch * Mathf.Deg2Rad;
-        float yawRad   = yaw   * Mathf.Deg2Rad;
+        float yawRad = yaw * Mathf.Deg2Rad;
 
+    
         Vector3 pos = new Vector3(
             distance * Mathf.Cos(pitchRad) * Mathf.Sin(yawRad),
             distance * Mathf.Sin(pitchRad),
@@ -39,10 +36,10 @@ public class Render : MonoBehaviour
         GameObject dot = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         dot.transform.parent = transform;
         dot.transform.localPosition = pos;
-        dot.transform.localScale = Vector3.one * 0.05f;
+        dot.transform.localScale = Vector3.one * 0.25f;
 
         // Color by distance
-        float t = Mathf.Clamp01(distance / maxRange);
+        float t = Mathf.Clamp01(distance);
         dot.GetComponent<Renderer>().material.color = Color.Lerp(nearColor, farColor, t);
 
         // Remove collider for performance

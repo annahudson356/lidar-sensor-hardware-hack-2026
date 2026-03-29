@@ -166,11 +166,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1e7f3f3dc9185d4cbfc36870ec552ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxPoints: 360
+  displayScale: 0.02
   maxRange: 500
-  displayRadius: 4
-  dotColor: {r: 0, g: 1, b: 0.2, a: 1}
-  sweepColor: {r: 0, g: 1, b: 0.2, a: 0.4}
+  nearColor: {r: 0, g: 1, b: 0, a: 1}
+  farColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &1286029835
 GameObject:
   m_ObjectHideFlags: 0
@@ -258,7 +257,7 @@ Transform:
   m_GameObject: {fileID: 1286029835}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 10, z: 0}
+  m_LocalPosition: {x: 0, y: 15, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -352,6 +351,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 027528a4b46c8eb4cb37e1123112b14d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  portName: COM3
+  baudRate: 9600
 --- !u!1 &2128602521
 GameObject:
   m_ObjectHideFlags: 0

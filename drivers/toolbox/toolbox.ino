@@ -15,16 +15,17 @@
 
 // Step Angle 1.8 degrees per revolution
 const float stepsPerRev = 200;
-const float rpm = 100;
-const float microSetting = 4;
+const float rpm = 1000;
+const float microSetting = 1;
 // Data To Report to Unity
 double yaw;
 double pitch;
 long long distance;
 
 
-int  lidarCount = 0;
+int lidarCount = 0;
 int loopCount = 0;
+int dataCount = 0;
 int servoDirection = 10;
 unsigned long lastServoUpdate = 0;
 const int SERVO_DELAY = 15;
@@ -51,7 +52,7 @@ void setup() {
     pinMode(M2_PIN, OUTPUT);
 
     digitalWrite(M0_PIN, LOW);
-    digitalWrite(M1_PIN, HIGH);
+    digitalWrite(M1_PIN, LOW);
     digitalWrite(M2_PIN, LOW);
 
     float speedSps = (microSetting * stepsPerRev * rpm) / 60;
@@ -73,9 +74,10 @@ void loop() {
     if(pitch < 0.01){
         loopCount ++;
     }
-    else if(loopCount >= 3){
+    else if(loopCount >= 2){
         yaw += servoDirection;
         myservo.write(yaw);
+
         // Reverse the direction of the servo motor every 180 degrees
         if (yaw >= 180 || yaw <= 0) {
             servoDirection = -servoDirection;
@@ -88,11 +90,15 @@ void loop() {
     distance = lidar.distance(biasCorrect);
     lidarCount++;
     
+    if(dataCount % 1 == 0){
+        Serial.print(pitch, 2);
+        Serial.print(",");
+        Serial.print(yaw, 2);
+        Serial.print(",");
+        Serial.println(distance);
+    }
     
-    Serial.print(pitch, 2);
-    Serial.print(",");
-    Serial.print(yaw, 2);
-    Serial.print(",");
-    Serial.println(distance);
+    dataCount ++;
+
 
 }
