@@ -24,7 +24,7 @@ public class PullData : MonoBehaviour {
             try{
                 // String parsing
                 string line = port.ReadLine();
-                string delim = ',';
+                char delim = ',';
                 string[] data  = line.Trim().Split(delim);
                 if (data.Length == 2){
                     CurrentAngle = float.Parse(data[0]);
