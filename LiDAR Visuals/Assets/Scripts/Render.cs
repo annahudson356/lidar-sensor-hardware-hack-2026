@@ -36,7 +36,7 @@ public class Render : MonoBehaviour
         GameObject dot = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         dot.transform.parent = transform;
         dot.transform.localPosition = pos;
-        dot.transform.localScale = Vector3.one * 0.25f;
+        dot.transform.localScale = Vector3.one * 0.10f;
 
         // Color by distance
         float t = Mathf.Clamp01(distance);

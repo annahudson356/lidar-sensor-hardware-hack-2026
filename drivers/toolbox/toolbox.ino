@@ -26,7 +26,7 @@ long long distance;
 int lidarCount = 0;
 int loopCount = 0;
 int dataCount = 0;
-int servoDirection = 10;
+int servoDirection = 3;
 unsigned long lastServoUpdate = 0;
 const int SERVO_DELAY = 15;
 
