@@ -89,11 +89,10 @@ void loop() {
     lidarCount++;
     
     
-    Serial.print("Pitch: ");
     Serial.print(pitch, 2);
-    Serial.print(", Yaw: ");
+    Serial.print(", ");
     Serial.print(yaw, 2);
-    Serial.print(", Distance: ");
+    Serial.print(", ");
     Serial.println(distance);
 
 }
