@@ -31,8 +31,4 @@ sysinfo.txt
 /.vs/
 
 
-# Other gitignore (may remove later)
-*.json
-*.asset
-*.settings
 
